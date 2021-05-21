@@ -28,16 +28,16 @@ def scaricaVideo(url, directory):
 @desc: si occupa di scaricare i video presenti nella playlist inviata
 @parameters: 
     url{String}: URL della playlist da scaricare
-    
+
 """
 
 def scaricaPlaylist(url):
     try: 
         directory = askDirectory()
         playlist = Playlist(url)
-        urls = playlist.video_urls
+        video_list = playlist.video_urls
         directory = createDirectory(directory, playlist.title)
-        for link in urls:
+        for link in video_list:
             scaricaVideo(link, directory)
 
         return "La playlist è stata scaricata correttamente nella cartella: " + directory
