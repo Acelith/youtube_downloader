@@ -43,7 +43,6 @@ def createDirectory(path, name):
                     break
 
         else:
-            #os.mkdir(path)
             os.makedirs(path + "/" + name)
             finalDirectory  = path + "/" + name
 
