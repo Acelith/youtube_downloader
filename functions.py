@@ -28,7 +28,9 @@ def scaricaVideo(url, directory):
 @desc: si occupa di scaricare i video presenti nella playlist inviata
 @parameters: 
     url{String}: URL della playlist da scaricare
+    
 """
+
 def scaricaPlaylist(url):
     try: 
         directory = askDirectory()
@@ -49,6 +51,9 @@ def scaricaPlaylist(url):
 @parameters: 
     path{String}: path dove creare la directory
     name {String}: nome della directory
+
+@return: 
+    finalDirectory{String}: Path completo dove è stata creata la directory
 """
 
 def createDirectory(path, name):
