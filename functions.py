@@ -19,9 +19,8 @@ def scaricaVideo(url, directory):
     
         video.download(directory)
 
-        return "Il video è stato scaricato correttamente "
     except Exception:
-        return "Non è stato possibile scaricare il file, riprovare piu tardi"
+        return "Errore: Non è stato possibile scaricare il video correttamente"
 
 """
 @Name: scaricaPlaylist
@@ -37,12 +36,13 @@ def scaricaPlaylist(url):
         playlist = Playlist(url)
         video_list = playlist.video_urls
         directory = createDirectory(directory, playlist.title)
+
+        #Scarica i video e li inserisce nella directory
         for link in video_list:
             scaricaVideo(link, directory)
 
-        return "La playlist è stata scaricata correttamente nella cartella: " + directory
     except Exception:
-        return "Non è stato possibile scaricare la playlist, riprovare piu tardi"
+        return "Errore: la playlist non è stata scaricata correttamente"
 
 """
 @Name: createDirectory
@@ -59,6 +59,7 @@ def scaricaPlaylist(url):
 def createDirectory(path, name):
     try:
         finalDirectory = 0
+        #Check esistenza cartella 
         if os.path.exists(path + "/" + name):
             i = 0
             digit = 1
@@ -66,6 +67,7 @@ def createDirectory(path, name):
                 if os.path.isdir(path + "/" + name + " - " + str(digit)):
                     digit = digit + 1
                 else:
+                    #Crea la cartella nella posizione data e con un nome non usato
                     os.makedirs(path + "/" + name + " - " + str(digit))
                     finalDirectory  = path + "/" + name + " - " + str(digit)
                     break
@@ -76,12 +78,15 @@ def createDirectory(path, name):
 
         return finalDirectory
     except Exception:
-        return "Errore"
+        return "Errore creazione cartella"
 
 """
 @Name: askDirectory
 @desc: si occupa di chiedere all'utente il percorso della cartella, nel caso nulla viene passato
        sceglie come percorso la directory corrente dove sta girando lo script
+
+@return: 
+    directory{String}: Path scelto dall'utente oppure path dove lo script sta girando
 """
 
 def askDirectory():
@@ -92,7 +97,5 @@ def askDirectory():
     return directory
 
 
-
-
+#Test per le funzioni
 print(scaricaPlaylist("https://youtube.com/playlist?list=PLHLua7lnY9X-uAKqwp0T23h3A4d-ZajTO"))
-
