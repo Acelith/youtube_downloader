@@ -102,8 +102,8 @@ def askDirectory():
 
 # Define the window's contents
 layout = [[sg.Text("Url")],
-          [sg.Input(key='-INPUT-')],
-          [sg.Text(size=(40,1), key='-OUTPUT-')],
+          [[sg.Input(key='-INPUT-')], [sg.Image(size=(100,100),filename='logo4.gif')]],
+          [[sg.Text(size=(40,1), key='-OUTPUT-')]],
           [[sg.Radio('Video', 'choose', key='c_video', default=True) , sg.Radio('Playlist', 'choose' , key='c_playlist')]],
           [sg.Text("Percorso di download"), sg.Input(key='-PERCORSO-'), sg.Button('...') ],
           [sg.Button('Scarica'), sg.Button('Esci'), sg.Text(key='PROGRESS')]]
