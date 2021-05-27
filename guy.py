@@ -5,6 +5,8 @@ from pytube import Playlist
 from tkinter import * 
 import os
 
+
+#TODO: Trasformare il tutto in oggetti
 """
 @Name: scaricaVideo
 @desc: si occupa di scaricare il video dal link passato e lo mette nella posizione di directory
@@ -16,15 +18,13 @@ def scaricaVideo(url, directory):
     try:
         video = YouTube(url)
         video = video.streams.first()
-        video.register_on_progress_callback(window['PROGRESS'].update('Sto scaricando per favore aspetta'))
-        yt.register_on_complete_callback(window['PROGRESS'].update('Ho finito di scaricare ora puoi guardare il video ' + video.title()))
+        #video.register_on_complete_callback(window['PROGRESS'].update('Ho finito di scaricare ora puoi guardare il video ' + video.title()))
 
         video.download(directory)
         
-
+        return 1
     except Exception:
-        return "Errore: Non è stato possibile scaricare il video correttamente"
-
+        return 2
 """
 @Name: scaricaPlaylist
 @desc: si occupa di scaricare i video presenti nella playlist inviata
@@ -41,8 +41,16 @@ def scaricaPlaylist(url, directory):
         directory = createDirectory(directory, playlist.title)
 
         #Scarica i video e li inserisce nella directory
+        prog = 0
         for link in video_list:
-            scaricaVideo(link, directory)
+            res = scaricaVideo(link, directory)
+            if res == 2:
+                prog = playlist.length
+                break
+            else:
+                prog = prog + res
+
+            window['PROGRESS'].update_bar(prog)
 
     except Exception:
         return "Errore: la playlist non è stata scaricata correttamente"
@@ -102,11 +110,11 @@ def askDirectory():
 
 # Define the window's contents
 layout = [[sg.Text("Url")],
-          [[sg.Input(key='-INPUT-')], [sg.Image(size=(100,100),filename='logo4.gif')]],
-          [[sg.Text(size=(40,1), key='-OUTPUT-')]],
-          [[sg.Radio('Video', 'choose', key='c_video', default=True) , sg.Radio('Playlist', 'choose' , key='c_playlist')]],
+          [sg.Input(key='-URL-')], [sg.Image(size=(100,100),filename='logo.gif')],
+          [sg.Text(size=(40,1), key='-OUTPUT-')],
           [sg.Text("Percorso di download"), sg.Input(key='-PERCORSO-'), sg.Button('...') ],
-          [sg.Button('Scarica'), sg.Button('Esci'), sg.Text(key='PROGRESS')]]
+          [sg.Button('Scarica'), sg.Button('Esci'), sg.ProgressBar(max_value='20',size=(40,20), key='PROGRESS')]]
+#[[sg.Radio('Video', 'choose', key='c_video', default=True) , sg.Radio('Playlist', 'choose' , key='c_playlist')]],
 
 # Create the window
 window = sg.Window('Scarica video e playlist da youtube', layout)
@@ -114,6 +122,7 @@ window = sg.Window('Scarica video e playlist da youtube', layout)
 # Display and interact with the Window using an Event Loop
 while True:
     event, values = window.read()
+    url = values['-URL-']
     # See if user wants to quit or window was closed
     if event == sg.WINDOW_CLOSED or event == 'Quit':
         break
@@ -121,16 +130,17 @@ while True:
     elif event == '...':
         cartella = askDirectory()
         window['-PERCORSO-'].update(cartella)
-    #Scarica la playlist 
+    #Scarica media
     elif event == 'Scarica':
         try:
-            if values['c_vide'] == true:
-                scaricaVideo(values['-INPUT-'], values['-PERCORSO-'])
-            elif values['c_vide'] == false:
-                scaricaPlaylist(values['-INPUT-'], values['-PERCORSO-'])
-            window['-OUTPUT-'].update('la tua playlist sta venendo scaricata, per favore aspetta')
+            if "playlist" in url:
+                scaricaPlaylist(url, values['-PERCORSO-'])
+                window['-OUTPUT-'].update('la tua playlist sta venendo scaricata, per favore aspetta')
+            else:
+                scaricaVideo(url, values['-PERCORSO-'])
+            window['-OUTPUT-'].update('il tuo video sta venendo scaricato, per favore aspetta')
         except Exception:
-            window['-OUTPUT-'].update('Non funziona un cazzo')
+            window['-OUTPUT-'].update('Non funziona niente cribbio')
     
    
 
