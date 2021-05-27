@@ -61,13 +61,13 @@ def btnClicked():
 # gui coding
 root = Tk()
 root.title("Youtube downloader")
-root.iconbitmap("logo.png")
+#root.iconbitmap("logo.png")
 root.geometry("500x250")
 
 # main icon section
-file = PhotoImage(file="logo.png")
-headingIcon = Label(root, image=file)
-headingIcon.pack(side=TOP, pady=3)
+#file = PhotoImage(file="logo.png")
+#headingIcon = Label(root, image=file)
+#headingIcon.pack(side=TOP, pady=3)
 # making url field
 urlField = Entry(root, font=font, justify=CENTER)
 urlField.pack(side=TOP, fill=X, padx=10)
