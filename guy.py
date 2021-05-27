@@ -5,8 +5,7 @@ from pytube import Playlist
 from tkinter import * 
 import os
 
-
-#TODO: Trasformare il tutto in oggetti
+playlist_lengt = 0
 """
 @Name: scaricaVideo
 @desc: si occupa di scaricare il video dal link passato e lo mette nella posizione di directory
@@ -42,6 +41,7 @@ def scaricaPlaylist(url, directory):
 
         #Scarica i video e li inserisce nella directory
         prog = 0
+        playlist_lengt = playlist.length
         for link in video_list:
             res = scaricaVideo(link, directory)
             if res == 2:
@@ -113,7 +113,7 @@ layout = [[sg.Text("Url")],
           [sg.Input(key='-URL-')], [sg.Image(size=(100,100),filename='logo.gif')],
           [sg.Text(size=(40,1), key='-OUTPUT-')],
           [sg.Text("Percorso di download"), sg.Input(key='-PERCORSO-'), sg.Button('...') ],
-          [sg.Button('Scarica'), sg.Button('Esci'), sg.ProgressBar(max_value='20',size=(40,20), key='PROGRESS')]]
+          [sg.Button('Scarica'), sg.Button('Esci'), sg.ProgressBar(max_value=playlist_lengt,size=(40,20), key='PROGRESS')]]
 #[[sg.Radio('Video', 'choose', key='c_video', default=True) , sg.Radio('Playlist', 'choose' , key='c_playlist')]],
 
 # Create the window
