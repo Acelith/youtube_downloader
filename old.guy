@@ -1,0 +1,40 @@
+
+# Define the window's contents
+layout = [[sg.Text("Url")],
+          [sg.Input(key='-URL-')], [sg.Image(size=(100,100),filename='logo.gif')],
+          [sg.Text(size=(40,1), key='-OUTPUT-')],
+          [sg.Text("Percorso di download"), sg.Input(key='-PERCORSO-'), sg.Button('...') ],
+          [sg.Button('Scarica'), sg.Button('Esci'), sg.ProgressBar(max_value=playlist_lengt,size=(40,20), key='PROGRESS')]]
+#[[sg.Radio('Video', 'choose', key='c_video', default=True) , sg.Radio('Playlist', 'choose' , key='c_playlist')]],
+
+# Create the window
+window = sg.Window('Scarica video e playlist da youtube', layout)
+
+# Display and interact with the Window using an Event Loop
+while True:
+    event, values = window.read()
+    url = values['-URL-']
+    # See if user wants to quit or window was closed!
+    if event == sg.WINDOW_CLOSED or event == 'Quit':
+        break
+    elif event == '...':
+        cartella = askDirectory()
+        window['-PERCORSO-'].update(cartella)
+    #Scarica media
+    elif event == 'Scarica':
+        try:
+            if "playlist" in url:
+                scaricaPlaylist(url, values['-PERCORSO-'])
+                window['-OUTPUT-'].update('la tua playlist sta venendo scaricata, per favore aspetta')
+            else:
+                scaricaVideo(url, values['-PERCORSO-'])
+            window['-OUTPUT-'].update('il tuo video sta venendo scaricato, per favore aspetta')
+        except Exception:
+            window['-OUTPUT-'].update('Non funziona niente cribbio')
+    
+   
+
+# Finish up by removing from the screen
+window.close()
+
+#TODO Controllare i radio button se selezionata playlist oppure video, ultima cosa in cantiere, il progetto e da finire
