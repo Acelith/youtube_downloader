@@ -123,7 +123,7 @@ window = sg.Window('Scarica video e playlist da youtube', layout)
 while True:
     event, values = window.read()
     url = values['-URL-']
-    # See if user wants to quit or window was closed
+    # See if user wants to quit or window was closed!
     if event == sg.WINDOW_CLOSED or event == 'Quit':
         break
 
