@@ -14,11 +14,12 @@ playlist_lengt = 0
     directory {String}: percorso dove inserire il video
 """
 def scaricaVideo(url, directory):
+    global size
     try:
         video = YouTube(url)
         video = video.streams.first()
         #video.register_on_complete_callback(window['PROGRESS'].update('Ho finito di scaricare ora puoi guardare il video ' + video.title()))
-
+        size = video.filesize
         video.download(directory)
 
         return 1
@@ -41,19 +42,35 @@ def scaricaPlaylist(url, directory):
         #Scarica i video e li inserisce nella directory
         prog = 0
 
-        playlist_lengt = playlist.length
+        playlist_lengt = "0 / " + str(playlist.length)
         for link in video_list:
+            #how_many.insert(0, playlist_lengt)
             res = scaricaVideo(link, directory)
             if res == 2:
                 prog = playlist.length
                 break
             else:
+                #playlist_lengt = prog + " / " + playlist.length
                 prog = prog + res
 
-            window['PROGRESS'].update_bar(prog)
+           
        
     except Exception:
         return "Errore: la playlist non è stata scaricata correttamente"
+
+def progressDownload(stream=None, chunk=None, bytes_remaining=None):
+    percent = (100 * ((size - bytes_remaining) / size))
+    path_button['text'] = "{:00.0f}% downloaded ".format(percent)
+
+
+def scaricaMedia():
+    directory = path_field.get()
+    url = url_field.get()
+
+    if "playlist" in url:
+       res = scaricaPlaylist(url,directory)
+    else:
+        scaricaVideo(url,directory)
 
 """
 @Name: createDirectory
@@ -105,7 +122,7 @@ def askDirectory():
         
     if directory == '':
         directory = os.getcwd()
-    return directory
+    path_field.insert(0, directory) 
 
 
 # gui
@@ -113,11 +130,32 @@ def askDirectory():
 finestra = tk.Tk()
 #widget
 lbl_download_video = tk.Label(text="Inserisci url da scaricare", width=50, height=3)
-url_field = tk.Entry(finestra,width=50)
-download_btn = tk.Button(text="Avvia download",  width=10,height=4,command=scaricaPlaylist)
-
-#pack
 lbl_download_video.pack()
+
+
+url_field = tk.Entry(finestra,width=50)
 url_field.pack()
+
+lbl_path_video = tk.Label(text="path dove scaricare video", width=50, height=3)
+lbl_path_video.pack()
+
+path_field = tk.Entry(finestra,width=50)
+path_field.pack()
+
+path_button = tk.Button(text="...",  width=2,height=1,command=askDirectory)
+path_button.pack()
+path_button.place(x=645, y=140)
+
+download_btn = tk.Button(text="Avvia download",  width=10,height=4,command=scaricaMedia)
 download_btn.pack()
+
+how_many = tk.Label(text=" ", width=50, height=3)
+how_many.pack()
+
+
+#opzioni supplementari
+finestra.resizable(False, False)
+finestra.geometry("800x300")
+
+
 finestra.mainloop()
