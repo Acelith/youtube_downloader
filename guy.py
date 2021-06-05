@@ -5,26 +5,49 @@ from pytube import Playlist
 import tkinter as tk
 import os
 
-playlist_lengt = 0
+
+"""
+@Name: scaricaMedia
+@desc: Si occupa di controllre se l'url appartiene ad una playlist oppure un video e 
+       di conseguenza utilizza la funzione necessaria
+
+"""
+
+def scaricaMedia():
+    directory = path_field.get()
+    url = url_field.get()
+    
+    if url == "":
+        tk.messagebox.showerror(title="Link", message="Nessun link inserito. ")
+    elif "playlist" in url:
+        tk.messagebox.showinfo(title="Download in corso", message="Download in corso, attendere")
+        scaricaPlaylist(url,directory)
+    else:
+        tk.messagebox.showinfo(title="Download in corso", message="Download in corso, attendere")
+        scaricaVideo(url,directory)
+
+
 """
 @Name: scaricaVideo
 @desc: si occupa di scaricare il video dal link passato e lo mette nella posizione di directory
 @parameters: 
     url{String}: URL del video da scaricare
     directory {String}: percorso dove inserire il video
+
+@return {int}
 """
 def scaricaVideo(url, directory):
-    global size
     try:
         video = YouTube(url)
         video = video.streams.first()
-        #video.register_on_complete_callback(window['PROGRESS'].update('Ho finito di scaricare ora puoi guardare il video ' + video.title()))
-        size = video.filesize
         video.download(directory)
 
         return 1
     except Exception:
-        return 2
+        tk.messagebox.showerror(title="Errore scaricamento video", message="Errore nello scaricamento del video. ")
+        return -1
+
+
 """
 @Name: scaricaPlaylist
 @desc: si occupa di scaricare i video presenti nella playlist inviata
@@ -39,45 +62,17 @@ def scaricaPlaylist(url, directory):
         video_list = playlist.video_urls
         directory = createDirectory(directory, playlist.title)
 
-        #Scarica i video e li inserisce nella directory
-        prog = 0
-
-        playlist_lengt = "0 / " + str(playlist.length)
         for link in video_list:
-            how_many.insert(0, playlist_lengt)
             res = scaricaVideo(link, directory)
-            if res == 2:
-                prog = playlist.length
+            if res == -1:
                 break
-            else:
-                playlist_lengt = prog + " / " + playlist.length
-                prog = prog + res
-
-           
-       
+            
+        tk.messagebox.showinfo(title="Download completato", message="Download playlist conclus :)")
+        return 1
     except Exception as e:
         print(e)
-        return "Errore: la playlist non è stata scaricata correttamente"
-
-
-"""
-@Name: scaricaMedia
-@desc: Si occupa di controllre se l'url appartiene ad una playlist oppure un video e 
-       di conseguenza utilizza la funzione necessaria
-
-"""
-
-def scaricaMedia():
-    directory = path_field.get()
-    url = url_field.get()
-
-    if "playlist" in url:
-       res = scaricaPlaylist(url,directory)
-    else:
-        scaricaVideo(url,directory)
-
-
-
+        tk.messagebox.showerror(title="Errore playlist", message="Errore nello scaricamento della playlist. ")
+        return -1
 
 
 """
@@ -114,7 +109,7 @@ def createDirectory(path, name):
 
         return finalDirectory
     except Exception:
-        return "Errore creazione cartella"
+        tk.messagebox.showerror(title="Errore cartella", message="Impossibile creare la cartella di destinazione.")
 
 """
 @Name: askDirectory
@@ -133,7 +128,7 @@ def askDirectory():
     path_field.insert(0, directory) 
 
 
-#--------------------------------------------Design Guy------------------------------------------------------------------------------------------------#
+#-------------------------------------------Guy---------------------------------------------------------#
 # gui
 finestra = tk.Tk()
 #widget
@@ -151,15 +146,13 @@ lbl_path_video.pack()
 path_field = tk.Entry(finestra,width=50)
 path_field.pack()
 
-path_button = tk.Button(text="...",  width=2,height=1,command=askDirectory)
+path_button = tk.Button(text="...",  width=4,height=1,command=askDirectory)
 path_button.pack()
 path_button.place(x=445, y=117)
 
 download_btn = tk.Button(text="Avvia download",  width=10,height=4,command=scaricaMedia)
 download_btn.pack()
 
-how_many = tk.Label(text=" ", width=50, height=3)
-how_many.pack()
 
 
 #opzioni supplementari
