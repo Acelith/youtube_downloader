@@ -44,24 +44,28 @@ def scaricaPlaylist(url, directory):
 
         playlist_lengt = "0 / " + str(playlist.length)
         for link in video_list:
-            #how_many.insert(0, playlist_lengt)
+            how_many.insert(0, playlist_lengt)
             res = scaricaVideo(link, directory)
             if res == 2:
                 prog = playlist.length
                 break
             else:
-                #playlist_lengt = prog + " / " + playlist.length
+                playlist_lengt = prog + " / " + playlist.length
                 prog = prog + res
 
            
        
-    except Exception:
+    except Exception as e:
+        print(e)
         return "Errore: la playlist non è stata scaricata correttamente"
 
-def progressDownload(stream=None, chunk=None, bytes_remaining=None):
-    percent = (100 * ((size - bytes_remaining) / size))
-    path_button['text'] = "{:00.0f}% downloaded ".format(percent)
 
+"""
+@Name: scaricaMedia
+@desc: Si occupa di controllre se l'url appartiene ad una playlist oppure un video e 
+       di conseguenza utilizza la funzione necessaria
+
+"""
 
 def scaricaMedia():
     directory = path_field.get()
@@ -71,6 +75,10 @@ def scaricaMedia():
        res = scaricaPlaylist(url,directory)
     else:
         scaricaVideo(url,directory)
+
+
+
+
 
 """
 @Name: createDirectory
@@ -125,10 +133,11 @@ def askDirectory():
     path_field.insert(0, directory) 
 
 
+#--------------------------------------------Design Guy------------------------------------------------------------------------------------------------#
 # gui
-
 finestra = tk.Tk()
 #widget
+
 lbl_download_video = tk.Label(text="Inserisci url da scaricare", width=50, height=3)
 lbl_download_video.pack()
 
@@ -144,7 +153,7 @@ path_field.pack()
 
 path_button = tk.Button(text="...",  width=2,height=1,command=askDirectory)
 path_button.pack()
-path_button.place(x=645, y=140)
+path_button.place(x=445, y=117)
 
 download_btn = tk.Button(text="Avvia download",  width=10,height=4,command=scaricaMedia)
 download_btn.pack()
@@ -155,7 +164,7 @@ how_many.pack()
 
 #opzioni supplementari
 finestra.resizable(False, False)
-finestra.geometry("800x300")
+finestra.geometry("500x300")
 
 
 finestra.mainloop()
