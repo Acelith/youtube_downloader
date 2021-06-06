@@ -1,10 +1,44 @@
-import PySimpleGUI as sg
 from tkinter.filedialog import askdirectory
 from pytube import YouTube
 from pytube import Playlist
 import tkinter as tk
 import os
 
+"""
+@Name: createDirectory
+@desc: si occupa di creare una directory nella posizione deisderata con il nome desiderata,
+    se dovesse già esistere una directory con lo stesso nome aggiunge un numero al nome
+@parameters: 
+    path{String}: path dove creare la directory
+    name {String}: nome della directory
+
+@return: 
+    finalDirectory{String}: Path completo dove è stata creata la directory
+"""
+
+def createDirectory(path, name):
+    try:
+        finalDirectory = 0
+        #Check esistenza cartella
+        if os.path.exists(path + "/" + name):
+            i = 0
+            digit = 1
+            while i < 1:
+                if os.path.isdir(path + "/" + name + " - " + str(digit)):
+                    digit = digit + 1
+                else:
+                    #Crea la cartella nella posizione data e con un nome non usato
+                    os.makedirs(path + "/" + name + " - " + str(digit))
+                    finalDirectory  = path + "/" + name + " - " + str(digit)
+                    break
+
+        else:
+            os.makedirs(path + "/" + name)
+            finalDirectory  = path + "/" + name
+
+        return finalDirectory
+    except Exception:
+        tk.messagebox.showerror(title="Errore cartella", message="Impossibile creare la cartella di destinazione.")
 
 """
 @Name: scaricaMedia
@@ -21,10 +55,10 @@ def scaricaMedia():
         tk.messagebox.showerror(title="Link", message="Nessun link inserito. ")
     elif "playlist" in url:
         tk.messagebox.showinfo(title="Download in corso", message="Download in corso, attendere")
-        scaricaPlaylist(url,directory)
+        scaricaPlaylist(url, directory)
     else:
         tk.messagebox.showinfo(title="Download in corso", message="Download in corso, attendere")
-        scaricaVideo(url,directory)
+        scaricaVideo(url, directory)
 
 
 """
@@ -75,41 +109,6 @@ def scaricaPlaylist(url, directory):
         return -1
 
 
-"""
-@Name: createDirectory
-@desc: si occupa di creare una directory nella posizione deisderata con il nome desiderata,
-    se dovesse già esistere una directory con lo stesso nome aggiunge un numero al nome
-@parameters: 
-    path{String}: path dove creare la directory
-    name {String}: nome della directory
-
-@return: 
-    finalDirectory{String}: Path completo dove è stata creata la directory
-"""
-
-def createDirectory(path, name):
-    try:
-        finalDirectory = 0
-        #Check esistenza cartella 
-        if os.path.exists(path + "/" + name):
-            i = 0
-            digit = 1
-            while i < 1:
-                if os.path.isdir(path + "/" + name + " - " + str(digit)):
-                    digit = digit + 1
-                else:
-                    #Crea la cartella nella posizione data e con un nome non usato
-                    os.makedirs(path + "/" + name + " - " + str(digit))
-                    finalDirectory  = path + "/" + name + " - " + str(digit)
-                    break
-
-        else:
-            os.makedirs(path + "/" + name)
-            finalDirectory  = path + "/" + name
-
-        return finalDirectory
-    except Exception:
-        tk.messagebox.showerror(title="Errore cartella", message="Impossibile creare la cartella di destinazione.")
 
 """
 @Name: askDirectory
@@ -131,6 +130,9 @@ def askDirectory():
 #-------------------------------------------Guy---------------------------------------------------------#
 # gui
 finestra = tk.Tk()
+
+#titolo
+finestra.title("Youtube downloader")  
 #widget
 
 lbl_download_video = tk.Label(text="Inserisci url da scaricare", width=50, height=3)
@@ -150,7 +152,7 @@ path_button = tk.Button(text="...",  width=4,height=1,command=askDirectory)
 path_button.pack()
 path_button.place(x=445, y=117)
 
-download_btn = tk.Button(text="Avvia download",  width=10,height=4,command=scaricaMedia)
+download_btn = tk.Button(text="Download",  width=10,height=4,command=scaricaMedia)
 download_btn.pack()
 
 
